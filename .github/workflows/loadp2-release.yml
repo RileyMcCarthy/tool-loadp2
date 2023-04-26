@@ -13,7 +13,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [windows-latest,ubuntu-latest,macos-latest]
+        os: [ubuntu-latest]
     steps:
     - name: Install Bison
       if: runner.os == 'Windows'
@@ -50,7 +50,9 @@ jobs:
     - name: Make targets (Non-Windows)
       if: runner.os != 'Windows'
       run: |
-        make P2ASM="${{github.workspace}}/tools/build/flexspin -2"
+        make loadp2.linux P2ASM="${{github.workspace}}/tools/build/flexspin -2"
+        make loadp2.exe P2ASM="${{github.workspace}}/tools/build/flexspin -2"
+        make loadp2.mac P2ASM="${{github.workspace}}/tools/build/flexspin -2"
     # Create build directory
     - name: Create release directory
       run: |
