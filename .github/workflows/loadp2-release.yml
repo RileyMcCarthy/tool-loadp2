@@ -50,7 +50,7 @@ jobs:
     - name: Make targets (Non-Windows)
       if: runner.os != 'Windows'
       run: |
-        make CROSS=linux32 P2ASM="${{github.workspace}}/tools/build/flexspin -2"
+        make P2ASM="${{github.workspace}}/tools/build/flexspin -2"
         make CROSS=macosx P2ASM="${{github.workspace}}/tools/build/flexspin -2"
         make CROSS=win32 P2ASM="${{github.workspace}}/tools/build/flexspin -2"
     # Create build directory
