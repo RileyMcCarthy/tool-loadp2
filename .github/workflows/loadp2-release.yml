@@ -43,8 +43,14 @@ jobs:
         cd ./tools
         make
     # make loadp2
-    - name: Make targets
-      run: make P2ASM="${{github.workspace}}/tools/build/flexspin -2"
+    - name: Make loadp2 (Windows only)
+      if: runner.os == 'Windows'
+      run: |
+        msys2 -c "make P2ASM=\"${{github.workspace}}/tools/build/flexspin -2\""
+    - name: Make targets (Non-Windows)
+      if: runner.os != 'Windows'
+      run: |
+        make P2ASM="${{github.workspace}}/tools/build/flexspin -2"
     # Create build directory
     - name: Create release directory
       run: |
