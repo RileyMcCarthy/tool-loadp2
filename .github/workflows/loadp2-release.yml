@@ -31,8 +31,14 @@ jobs:
       with:
         repository: totalspectrum/spin2cpp
         path: ./tools
-      # make spin2cpp
-    - name: Make spin2cpp
+     # make spin2cpp
+    - name: Make targets (Windows only)
+      if: runner.os == 'Windows'
+      run: |
+        cd ./tools
+        msys2 -c make
+    - name: Make targets (Non-Windows)
+      if: runner.os != 'Windows'
       run: |
         cd ./tools
         make
