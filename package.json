@@ -1,0 +1,12 @@
+ {
+  "name": "tool-loadp2",
+  "version": "047",
+  "description": "Propeller uploader",
+  "keywords": [
+    "uploader",
+    "parallax",
+    "propeller"
+  ],
+  "homepage": "https://github.com/totalspectrum/loadp2",
+  "license": "GPL-2.0-or-later"
+} 
