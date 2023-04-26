@@ -46,7 +46,7 @@ jobs:
     - name: Make loadp2 (Windows only)
       if: runner.os == 'Windows'
       run: |
-        msys2 -c "make P2ASM=\"${{github.workspace}}/tools/build/flexspin -2\""
+        msys2 -c "make CROSS=win32 P2ASM=\"${{github.workspace}}/tools/build/flexspin -2\""
     - name: Make targets (Non-Windows)
       if: runner.os != 'Windows'
       run: |
