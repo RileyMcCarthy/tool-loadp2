@@ -50,9 +50,9 @@ jobs:
     - name: Make targets (Non-Windows)
       if: runner.os != 'Windows'
       run: |
-        make loadp2.linux P2ASM="${{github.workspace}}/tools/build/flexspin -2"
-        make loadp2.exe P2ASM="${{github.workspace}}/tools/build/flexspin -2"
-        make loadp2.mac P2ASM="${{github.workspace}}/tools/build/flexspin -2"
+        make CROSS=linux32 P2ASM="${{github.workspace}}/tools/build/flexspin -2"
+        make CROSS=macosx P2ASM="${{github.workspace}}/tools/build/flexspin -2"
+        make CROSS=win32 P2ASM="${{github.workspace}}/tools/build/flexspin -2"
     # Create build directory
     - name: Create release directory
       run: |
