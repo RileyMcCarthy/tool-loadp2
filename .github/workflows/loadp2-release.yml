@@ -1,0 +1,114 @@
+name: tool-loadp2
+permissions:
+  contents: write
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch to create release from'     
+        required: true
+        default: 'master'
+jobs:
+  build-multiplatform:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest,macos-latest]
+    steps:
+    - name: Install Bison
+      if: runner.os == 'Windows'
+      uses: msys2/setup-msys2@v2
+      with:
+        install: gcc make bison
+    # Checkout spin2cpp repo and setup environment
+    - uses: actions/checkout@v3
+      with:
+        repository: totalspectrum/loadp2
+        ref: v${{ github.event.inputs.branch }}
+        submodules: recursive
+    - name: Checkout spin2cpp as a tool
+      uses: actions/checkout@v3
+      with:
+        repository: totalspectrum/spin2cpp
+        path: ./tools
+      # make spin2cpp
+    - name: Make spin2cpp
+      run: |
+        cd ./tools
+        make
+    # make loadp2
+    - name: Make targets
+      run: make P2ASM="${{github.workspace}}/tools/build/flexspin -2"
+    # Create build directory
+    - name: Create release directory
+      run: |
+        mkdir 'release'
+    - if: runner.os == 'Windows'
+      run: |
+        msys2 -c 'cp build/loadp2 release/loadp2.exe'
+    - if: runner.os == 'Linux'
+      run: |
+        cp build/loadp2 release/loadp2
+    - if: runner.os == 'macOS'
+      run: |
+        cp build/loadp2 release/loadp2.mac
+    # Uploading build files
+    - name: Archive results
+      uses: actions/upload-artifact@v3
+      with:
+        name: loadp2-${{ runner.os }}
+        path: 'release/'
+  create-release:
+    needs: build-multiplatform
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        submodules: recursive
+    - name: Create artifact dir
+      run: mkdir -p ./artifacts
+    - name: Download artifacts
+      uses: actions/download-artifact@v3
+      with:
+        path: ./artifacts
+    - name: Create platformio package.json
+      run: >
+        echo '
+        {
+          "name": "tool-loadp2",
+          "version": "${{ github.event.inputs.branch }}",
+          "description": "Propeller uploader",
+          "keywords": [
+            "uploader",
+            "parallax",
+            "propeller"
+          ],
+          "homepage": "https://github.com/totalspectrum/loadp2",
+          "license": "GPL-2.0-or-later"
+        }
+        ' > 'package.json'
+    - name: Create release directory and copy required files
+      run: |
+        mkdir -p 'bin'
+        cp artifacts/loadp2-Windows/loadp2.exe ./bin
+        cp artifacts/loadp2-Linux/loadp2 ./bin
+        cp artifacts/loadp2-macOS/loadp2.mac ./bin
+        rm -R artifacts
+    - name: Change permissions
+      run: chmod a+rwx ./bin/*
+    - name: Push updated package
+      run: |
+        git config --global user.name 'rileymccarthy'
+        git config --global user.email 'riley.mccarthy@yahoo.com'
+        git add 'package.json'
+        git add './bin/*'
+        git commit -am "v${{ github.event.inputs.branch }}"
+        git push
+    - name: Release with Notes
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: loadp2-${{ github.event.inputs.branch }}
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
