@@ -122,7 +122,7 @@ jobs:
     - name: Release with Notes
       uses: softprops/action-gh-release@v1
       with:
-        tag_name: loadp2-${{ github.event.inputs.branch }}
+        tag_name: v${{ github.event.inputs.branch }}
         draft: false
         prerelease: false
       env:
