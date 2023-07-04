@@ -109,9 +109,9 @@ jobs:
     - name: Create release directory and copy required files
       run: |
         mkdir -p 'bin'
-        cp artifacts/loadp2-Windows ./bin
-        cp artifacts/loadp2-Linux ./bin
-        cp artifacts/loadp2-macOS ./bin
+        cp -r artifacts/loadp2-Windows ./bin
+        cp -r artifacts/loadp2-Linux ./bin
+        cp -r artifacts/loadp2-macOS ./bin
         rm -R artifacts
     - name: Change permissions
       run: chmod a+rwx ./bin/*
