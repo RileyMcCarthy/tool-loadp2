@@ -67,6 +67,10 @@ jobs:
     - if: runner.os == 'macOS'
       run: |
         cp build/loadp2 release/loadp2.mac
+    - name: Copy Flash and SD Loaders
+      run: |
+        mv board/P2ES_sdcard.bin release/P2ES_sdcard.bin
+        mv board/P2ES_flashloader.bin release/P2ES_flashloader.bin
     # Uploading build files
     - name: Archive results
       uses: actions/upload-artifact@v3
